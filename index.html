@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo cáo Phân tích Dược phẩm Việt Nam</title>
+  <style>
+    :root {
+      --blue: #185FA5;
+      --green: #1D9E75;
+      --red: #E24B4A;
+      --ink: #1F2933;
+      --muted: #667085;
+      --line: #D9E2EC;
+      --bg: #F4F7FA;
+      --panel: #FFFFFF;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    header {
+      background: var(--blue);
+      color: #fff;
+      padding: 28px 40px 24px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 15px;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 12px 40px;
+      background: rgba(255, 255, 255, 0.96);
+      border-bottom: 1px solid var(--line);
+    }
+
+    nav a {
+      color: var(--blue);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      background: #fff;
+    }
+
+    main {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .summary-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .summary-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .summary-card strong {
+      font-size: 22px;
+    }
+
+    .module {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 22px;
+      margin-bottom: 24px;
+    }
+
+    .module-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+    }
+
+    .module-title h2 {
+      margin: 0;
+      color: var(--blue);
+      font-size: 21px;
+    }
+
+    .module-title p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .module-title strong {
+      color: var(--green);
+      white-space: nowrap;
+      font-size: 14px;
+      padding-top: 4px;
+    }
+
+    .chart-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+
+    .chart-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #FBFCFE;
+    }
+
+    .chart-heading h3 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .chart-heading span {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    iframe {
+      display: block;
+      width: 100%;
+      height: 720px;
+      border: 0;
+      background: #fff;
+    }
+
+    .warning {
+      background: #FFF7ED;
+      border: 1px solid #FDBA74;
+      border-radius: 8px;
+      padding: 18px;
+      margin-bottom: 24px;
+    }
+
+    footer {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 8px 4px 32px;
+    }
+
+    @media (max-width: 900px) {
+
+      header,
+      nav {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      main {
+        padding: 18px;
+      }
+
+      .summary {
+        grid-template-columns: 1fr;
+      }
+
+      .module-title {
+        display: block;
+      }
+
+      .chart-heading {
+        display: block;
+      }
+
+      .chart-heading span {
+        display: block;
+        margin-top: 4px;
+        white-space: normal;
+      }
+
+      iframe {
+        height: 640px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Báo cáo Phân tích Thị trường Dược phẩm Việt Nam</h1>
+
+  </header>
+  <nav>
+    <a href="#module-1">MODULE A - Tổng quan thị trường</a>
+    <a href="#module-2">MODULE B - Phân tích nhóm sản phẩm</a>
+    <a href="#module-3">MODULE C - Phân tích cạnh tranh</a>
+    <a href="#module-4">MODULE D - Xu hướng và dự báo</a>
+  </nav>
+  <main>
+    <section class="summary">
+      <div class="summary-card"><span>Charts included</span><strong>24</strong></div>
+      <div class="summary-card"><span>Modules</span><strong>4</strong></div>
+      <div class="summary-card"><span>Missing charts</span><strong>0</strong></div>
+    </section>
+
+
+    <section class="module" id="module-1">
+      <div class="module-title">
+        <div>
+          <h2>MODULE A - Tổng quan thị trường</h2>
+          <p>Quy mô thị trường, tăng trưởng, thị phần nhóm và xu hướng giá.</p>
+        </div>
+        <strong>4 charts</strong>
+      </div>
+
+      <article class="chart-card" id="A1_market_total_stacked_bar.html">
+        <div class="chart-heading">
+          <h3>A1. Doanh số thị trường theo năm</h3>
+          <span>A1_market_total_stacked_bar.html</span>
+        </div>
+        <iframe title="A1. Doanh số thị trường theo năm" src="../charts/A1_market_total_stacked_bar.html"
+          loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="A2_market_yoy_combo.html">
+        <div class="chart-heading">
+          <h3>A2. Tổng doanh số và tăng trưởng YoY</h3>
+          <span>A2_market_yoy_combo.html</span>
+        </div>
+        <iframe title="A2. Tổng doanh số và tăng trưởng YoY" src="../charts/A2_market_yoy_combo.html"
+          loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="A3_group_share_donut.html">
+        <div class="chart-heading">
+          <h3>A3. Thị phần theo nhóm sản phẩm</h3>
+          <span>A3_group_share_donut.html</span>
+        </div>
+        <iframe title="A3. Thị phần theo nhóm sản phẩm" src="../charts/A3_group_share_donut.html"
+          loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="A4_price_trend_line.html">
+        <div class="chart-heading">
+          <h3>A4. Xu hướng giá trung bình/đơn vị</h3>
+          <span>A4_price_trend_line.html</span>
+        </div>
+        <iframe title="A4. Xu hướng giá trung bình/đơn vị" src="../charts/A4_price_trend_line.html"
+          loading="lazy"></iframe>
+      </article>
+
+    </section>
+
+    <section class="module" id="module-2">
+      <div class="module-title">
+        <div>
+          <h2>MODULE B - Phân tích nhóm sản phẩm</h2>
+          <p>Phân tích sâu Men vi sinh, Men tiêu hóa và Vitamin.</p>
+        </div>
+        <strong>9 charts</strong>
+      </div>
+
+      <article class="chart-card" id="B1_group_revenue_multiline.html">
+        <div class="chart-heading">
+          <h3>B1. Doanh số 3 nhóm theo năm</h3>
+          <span>B1_group_revenue_multiline.html</span>
+        </div>
+        <iframe title="B1. Doanh số 3 nhóm theo năm" src="../charts/B1_group_revenue_multiline.html"
+          loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="B2_volume_value_bubble.html">
+        <div class="chart-heading">
+          <h3>B2. Volume vs Value</h3>
+          <span>B2_volume_value_bubble.html</span>
+        </div>
+        <iframe title="B2. Volume vs Value" src="../charts/B2_volume_value_bubble.html" loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="B3_top_molecules_bar_Men_vi_sinh.html">
+        <div class="chart-heading">
+          <h3>B3. Top Molecules - Men vi sinh</h3>
+          <span>B3_top_molecules_bar_Men_vi_sinh.html</span>
+        </div>
+        <iframe title="B3. Top Molecules - Men vi sinh" src="../charts/B3_top_molecules_bar_Men_vi_sinh.html"
+          loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="B3_top_molecules_bar_Men_tieu_hoa.html">
+        <div class="chart-heading">
+          <h3>B3. Top Molecules - Men tiêu hóa</h3>
+          <span>B3_top_molecules_bar_Men_tieu_hoa.html</span>
+        </div>
+        <iframe title="B3. Top Molecules - Men tiêu hóa" src="../charts/B3_top_molecules_bar_Men_tieu_hoa.html"
+          loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="B3_top_molecules_bar_Vitamin.html">
+        <div class="chart-heading">
+          <h3>B3. Top Molecules - Vitamin</h3>
+          <span>B3_top_molecules_bar_Vitamin.html</span>
+        </div>
+        <iframe title="B3. Top Molecules - Vitamin" src="../charts/B3_top_molecules_bar_Vitamin.html"
+          loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="B4_molecule_growth_heatmap.html">
+        <div class="chart-heading">
+          <h3>B4. Heatmap tăng trưởng phân tử</h3>
+          <span>B4_molecule_growth_heatmap.html</span>
+        </div>
+        <iframe title="B4. Heatmap tăng trưởng phân tử" src="../charts/B4_molecule_growth_heatmap.html"
+          loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="B5_top_brands_bar_Men_vi_sinh.html">
+        <div class="chart-heading">
+          <h3>B5. Top Brands - Men vi sinh</h3>
+          <span>B5_top_brands_bar_Men_vi_sinh.html</span>
+        </div>
+        <iframe title="B5. Top Brands - Men vi sinh" src="../charts/B5_top_brands_bar_Men_vi_sinh.html"
+          loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="B5_top_brands_bar_Men_tieu_hoa.html">
+        <div class="chart-heading">
+          <h3>B5. Top Brands - Men tiêu hóa</h3>
+          <span>B5_top_brands_bar_Men_tieu_hoa.html</span>
+        </div>
+        <iframe title="B5. Top Brands - Men tiêu hóa" src="../charts/B5_top_brands_bar_Men_tieu_hoa.html"
+          loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="B5_top_brands_bar_Vitamin.html">
+        <div class="chart-heading">
+          <h3>B5. Top Brands - Vitamin</h3>
+          <span>B5_top_brands_bar_Vitamin.html</span>
+        </div>
+        <iframe title="B5. Top Brands - Vitamin" src="../charts/B5_top_brands_bar_Vitamin.html" loading="lazy"></iframe>
+      </article>
+
+    </section>
+
+    <section class="module" id="module-3">
+      <div class="module-title">
+        <div>
+          <h2>MODULE C - Phân tích cạnh tranh</h2>
+          <p>Thị phần tập đoàn, nội địa vs ngoại nhập, BCG matrix và brand growth.</p>
+        </div>
+        <strong>8 charts</strong>
+      </div>
+
+      <article class="chart-card" id="C1_corp_share_stacked_Men_vi_sinh.html">
+        <div class="chart-heading">
+          <h3>C1. Thị phần tập đoàn - Men vi sinh</h3>
+          <span>C1_corp_share_stacked_Men_vi_sinh.html</span>
+        </div>
+        <iframe title="C1. Thị phần tập đoàn - Men vi sinh" src="../charts/C1_corp_share_stacked_Men_vi_sinh.html"
+          loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="C1_corp_share_stacked_Men_tieu_hoa.html">
+        <div class="chart-heading">
+          <h3>C1. Thị phần tập đoàn - Men tiêu hóa</h3>
+          <span>C1_corp_share_stacked_Men_tieu_hoa.html</span>
+        </div>
+        <iframe title="C1. Thị phần tập đoàn - Men tiêu hóa" src="../charts/C1_corp_share_stacked_Men_tieu_hoa.html"
+          loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="C1_corp_share_stacked_Vitamin.html">
+        <div class="chart-heading">
+          <h3>C1. Thị phần tập đoàn - Vitamin</h3>
+          <span>C1_corp_share_stacked_Vitamin.html</span>
+        </div>
+        <iframe title="C1. Thị phần tập đoàn - Vitamin" src="../charts/C1_corp_share_stacked_Vitamin.html"
+          loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="C2_domestic_vs_import.html">
+        <div class="chart-heading">
+          <h3>C2. Nội địa vs Ngoại nhập</h3>
+          <span>C2_domestic_vs_import.html</span>
+        </div>
+        <iframe title="C2. Nội địa vs Ngoại nhập" src="../charts/C2_domestic_vs_import.html" loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="C3_bcg_matrix_Men_vi_sinh.html">
+        <div class="chart-heading">
+          <h3>C3. BCG Matrix - Men vi sinh</h3>
+          <span>C3_bcg_matrix_Men_vi_sinh.html</span>
+        </div>
+        <iframe title="C3. BCG Matrix - Men vi sinh" src="../charts/C3_bcg_matrix_Men_vi_sinh.html"
+          loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="C3_bcg_matrix_Men_tieu_hoa.html">
+        <div class="chart-heading">
+          <h3>C3. BCG Matrix - Men tiêu hóa</h3>
+          <span>C3_bcg_matrix_Men_tieu_hoa.html</span>
+        </div>
+        <iframe title="C3. BCG Matrix - Men tiêu hóa" src="../charts/C3_bcg_matrix_Men_tieu_hoa.html"
+          loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="C3_bcg_matrix_Vitamin.html">
+        <div class="chart-heading">
+          <h3>C3. BCG Matrix - Vitamin</h3>
+          <span>C3_bcg_matrix_Vitamin.html</span>
+        </div>
+        <iframe title="C3. BCG Matrix - Vitamin" src="../charts/C3_bcg_matrix_Vitamin.html" loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="C4_brand_growth_ranking.html">
+        <div class="chart-heading">
+          <h3>C4. Tăng trưởng và suy giảm brand</h3>
+          <span>C4_brand_growth_ranking.html</span>
+        </div>
+        <iframe title="C4. Tăng trưởng và suy giảm brand" src="../charts/C4_brand_growth_ranking.html"
+          loading="lazy"></iframe>
+      </article>
+
+    </section>
+
+    <section class="module" id="module-4">
+      <div class="module-title">
+        <div>
+          <h2>MODULE D - Xu hướng và dự báo</h2>
+          <p>Forecast, waterfall đóng góp tăng trưởng và CAGR.</p>
+        </div>
+        <strong>3 charts</strong>
+      </div>
+
+      <article class="chart-card" id="D1_forecast_by_group.html">
+        <div class="chart-heading">
+          <h3>D1. Forecast doanh số 3 nhóm</h3>
+          <span>D1_forecast_by_group.html</span>
+        </div>
+        <iframe title="D1. Forecast doanh số 3 nhóm" src="../charts/D1_forecast_by_group.html" loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="D2_waterfall_delta.html">
+        <div class="chart-heading">
+          <h3>D2. Waterfall đóng góp tăng trưởng</h3>
+          <span>D2_waterfall_delta.html</span>
+        </div>
+        <iframe title="D2. Waterfall đóng góp tăng trưởng" src="../charts/D2_waterfall_delta.html"
+          loading="lazy"></iframe>
+      </article>
+
+      <article class="chart-card" id="D3_cagr_summary_bar.html">
+        <div class="chart-heading">
+          <h3>D3. CAGR tổng hợp 3 nhóm</h3>
+          <span>D3_cagr_summary_bar.html</span>
+        </div>
+        <iframe title="D3. CAGR tổng hợp 3 nhóm" src="../charts/D3_cagr_summary_bar.html" loading="lazy"></iframe>
+      </article>
+
+    </section>
+
+    <footer>
+      Source project: E:\Traphaco\Data analyst\analyze data\pharma_analysis. Charts are embedded from output/charts
+      using relative iframes.
+    </footer>
+  </main>
+</body>
+
+</html>
