@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pharma Analytics — Vietnam Market Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>    :root {
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --accent-a: #2563EB; --accent-b: #059669; --accent-c: #D97706; --accent-d: #7C3AED;
+      --primary: #1E3A5F; --primary-light: #2563EB;
+      --green: #059669; --red: #DC2626;
+      --ink: #1E293B; --ink-secondary: #475569; --muted: #94A3B8;
+      --border: #E2E8F0; --border-light: #F1F5F9;
+      --bg: #F8FAFC; --panel: #FFFFFF; --panel-hover: #FAFBFF;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.05); --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,.12);
+      --radius: 10px; --sidebar-w: 280px; --header-h: 64px;
+    }
+    [data-theme="dark"] {
+      --ink: #E2E8F0; --ink-secondary: #94A3B8; --muted: #64748B;
+      --border: #334155; --border-light: #1E293B;
+      --bg: #0F172A; --panel: #1E293B; --panel-hover: #253349;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.2); --shadow-md: 0 4px 12px rgba(0,0,0,.3);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,.5);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); color: var(--ink); background: var(--bg); line-height: 1.5; overflow-x: hidden; }
+    .site-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: var(--header-h);
+      background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #2563EB 100%);
+      display: flex; align-items: center; justify-content: space-between; padding: 0 24px; color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    }
+    .header-left { display: flex; align-items: center; gap: 14px; }
+    .header-left h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; white-space: nowrap; }
+    .header-left .subtitle { font-size: 12px; color: rgba(255,255,255,.7); display: none; }
+    @media(min-width:768px) { .header-left .subtitle { display: inline; } }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    .search-box { position: relative; display: flex; align-items: center; }
+    .search-box input {
+      width: 0; opacity: 0;
+      border: 1px solid rgba(255,255,255,.25); border-radius: 8px;
+      background: rgba(255,255,255,.12); color: #fff;
+      padding: 7px 12px 7px 32px; font-size: 13px; font-family: var(--font);
+      transition: width .3s, opacity .3s; outline: none;
+    }
+    .search-box input::placeholder { color: rgba(255,255,255,.5); }
+    .search-box input:focus, .search-box.open input { width: 220px; opacity: 1; background: rgba(255,255,255,.18); }
+    .search-box .search-icon { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); cursor: pointer; z-index: 2; }
+    .icon-btn {
+      width: 36px; height: 36px; border-radius: 8px; border: 1px solid rgba(255,255,255,.2);
+      background: rgba(255,255,255,.1); color: #fff; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: background .2s; font-size: 16px;
+    }
+    .icon-btn:hover { background: rgba(255,255,255,.2); }
+    .sidebar {
+      position: fixed; top: var(--header-h); left: 0; bottom: 0;
+      width: var(--sidebar-w); background: var(--panel); border-right: 1px solid var(--border);
+      overflow-y: auto; z-index: 50; padding: 16px 0;
+      transform: translateX(-100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
+    }
+    .sidebar.open { transform: translateX(0); }
+    @media(min-width:1024px) { .sidebar { transform: translateX(0); } }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,.4); }
+    .sidebar-overlay.show { display: block; }
+    @media(min-width:1024px) { .sidebar-overlay { display: none !important; } }
+    .nav-section { margin-bottom: 6px; }
+    .nav-module {
+      display: flex; align-items: center; gap: 10px; padding: 10px 20px;
+      font-size: 13px; font-weight: 600; color: var(--ink-secondary);
+      cursor: pointer; border-left: 3px solid transparent; transition: all .15s; text-decoration: none;
+    }
+    .nav-module:hover { background: var(--border-light); color: var(--ink); }
+    .nav-module.active { border-left-color: var(--accent); color: var(--ink); background: var(--border-light); }
+    .nav-module .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .nav-module .badge { margin-left: auto; font-size: 11px; font-weight: 500; background: var(--border-light); color: var(--muted); padding: 1px 7px; border-radius: 10px; }
+    .nav-charts { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+    .nav-charts.expanded { max-height: 600px; }
+    .nav-chart-link {
+      display: block; padding: 6px 20px 6px 42px; font-size: 12px; color: var(--muted);
+      text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .15s, background .15s;
+    }
+    .nav-chart-link:hover { color: var(--ink); background: var(--border-light); }
+    .nav-chart-link.active { color: var(--primary-light); font-weight: 500; }
+    .main-content { margin-top: var(--header-h); padding: 24px; transition: margin-left .3s; }
+    @media(min-width:1024px) { .main-content { margin-left: var(--sidebar-w); } }
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 28px; }
+    .summary-card {
+      background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 18px 20px; display: flex; align-items: flex-start; gap: 14px;
+      box-shadow: var(--shadow-sm); transition: transform .15s, box-shadow .15s;
+    }
+    .summary-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .summary-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .summary-card .label { font-size: 12px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: .5px; }
+    .summary-card .value { font-size: 26px; font-weight: 700; margin-top: 2px; }
+    .module-section { margin-bottom: 28px; }
+    .module-header {
+      background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+      border-left: 4px solid var(--accent); padding: 18px 22px;
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; user-select: none; box-shadow: var(--shadow-sm); transition: box-shadow .15s; margin-bottom: 2px;
+    }
+    .module-header:hover { box-shadow: var(--shadow-md); }
+    .module-header-left { display: flex; align-items: center; gap: 14px; }
+    .module-header-left .module-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: #fff; }
+    .module-header-left h2 { font-size: 17px; font-weight: 700; color: var(--ink); }
+    .module-header-left p { font-size: 13px; color: var(--muted); margin-top: 2px; }
+    .module-header-right { display: flex; align-items: center; gap: 12px; }
+    .module-header-right .chart-count { font-size: 12px; font-weight: 600; color: var(--muted); background: var(--border-light); padding: 4px 12px; border-radius: 20px; }
+    .collapse-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: transform .3s; color: var(--muted); font-size: 14px; }
+    .module-section.collapsed .collapse-icon { transform: rotate(-90deg); }
+    .chart-grid { display: grid; gap: 16px; grid-template-columns: 1fr; padding-top: 14px; transition: max-height .4s ease, opacity .3s ease; overflow: hidden; }
+    .module-section.collapsed .chart-grid { max-height: 0 !important; opacity: 0; padding-top: 0; }
+    .chart-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); transition: box-shadow .2s; }
+    .chart-card:hover { box-shadow: var(--shadow-md); }
+    .chart-card-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--panel-hover); }
+    .chart-card-header h3 { font-size: 14px; font-weight: 600; color: var(--ink); }
+    .chart-card-header .chart-meta { display: flex; align-items: center; gap: 8px; }
+    .chart-card-header .file-tag { font-size: 11px; color: var(--muted); background: var(--border-light); padding: 2px 8px; border-radius: 4px; font-family: monospace; }
+    .expand-btn {
+      width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--border);
+      background: var(--panel); color: var(--muted); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: all .15s; font-size: 14px;
+    }
+    .expand-btn:hover { background: var(--primary-light); color: #fff; border-color: var(--primary-light); }
+    .chart-iframe-wrapper { position: relative; background: var(--panel); }
+    .chart-iframe-wrapper iframe { display: block; width: 100%; border: 0; background: #fff; }
+    .iframe-skeleton { position: absolute; inset: 0; background: linear-gradient(90deg, var(--border-light) 25%, var(--border) 50%, var(--border-light) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; }
+    .iframe-skeleton.hidden { display: none; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .modal-overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.6); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.show { display: flex; }
+    .modal-content { width: 100%; max-width: 1400px; height: 90vh; background: var(--panel); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-lg); display: flex; flex-direction: column; }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); }
+    .modal-header h3 { font-size: 15px; font-weight: 600; }
+    .modal-close { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel); color: var(--ink); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: background .15s; }
+    .modal-close:hover { background: var(--red); color: #fff; border-color: var(--red); }
+    .modal-body { flex: 1; overflow: hidden; }
+    .modal-body iframe { width: 100%; height: 100%; border: 0; }
+    .plot { width: 100%; min-height: 560px; }
+    .back-to-top { position: fixed; bottom: 24px; right: 24px; z-index: 90; width: 44px; height: 44px; border-radius: 50%; background: var(--primary-light); color: #fff; border: none; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-md); opacity: 0; transform: translateY(20px); transition: opacity .3s, transform .3s; }
+    .back-to-top.show { opacity: 1; transform: translateY(0); }
+    .back-to-top:hover { background: #1D4ED8; }
+    .no-results { display: none; text-align: center; padding: 60px 20px; color: var(--muted); font-size: 15px; }
+    .no-results.show { display: block; }
+    .warning { background: #FFF7ED; border: 1px solid #FDBA74; border-radius: 8px; padding: 18px; margin-bottom: 24px; }
+    .hidden { display: none !important; }
+    @media (max-width: 900px) {
+      .module-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .chart-card-header { flex-direction: column; align-items: flex-start; gap: 6px; }
+    }
+</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-left">
+      <button class="icon-btn" id="menuToggle" title="Toggle navigation">&#9776;</button>
+      <div>
+        <h1>Pharma Analytics</h1>
+        <span class="subtitle">Vietnam Market Report</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="search-box" id="searchBox">
+        <span class="search-icon" onclick="document.getElementById('searchInput').focus();document.getElementById('searchBox').classList.add('open')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></span>
+        <input type="text" id="searchInput" placeholder="Search charts..." autocomplete="off" spellcheck="false">
+      </div>
+      <button class="icon-btn" id="themeToggle" title="Toggle dark mode"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg></button>
+    </div>
+  </header>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar" id="sidebar">
+    <div class="nav-section" data-module="module-a">
+      <a class="nav-module" href="#module-a" style="--accent: var(--accent-a)">
+        <span class="dot" style="background:var(--accent-a)"></span>
+        <span>A — Tong quan</span>
+        <span class="badge">4</span>
+      </a>
+      <div class="nav-charts"><a class="nav-chart-link" href="#A1_market_total_stacked_bar.html">A1. Doanh so thi truong theo nam (Stacke</a><a class="nav-chart-link" href="#A2_market_yoy_combo.html">A2. Tong doanh so va tang truong YoY</a><a class="nav-chart-link" href="#A3_group_share_donut.html">A3. Thi phan theo nhom san pham (Donut)</a><a class="nav-chart-link" href="#A4_price_trend_line.html">A4. Xu huong gia trung binh / don vi</a></div>
+    </div>
+    <div class="nav-section" data-module="module-b">
+      <a class="nav-module" href="#module-b" style="--accent: var(--accent-b)">
+        <span class="dot" style="background:var(--accent-b)"></span>
+        <span>B — Nhom san pham</span>
+        <span class="badge">9</span>
+      </a>
+      <div class="nav-charts"><a class="nav-chart-link" href="#B1_group_revenue_multiline.html">B1. Doanh so 3 nhom theo nam (Multi-line</a><a class="nav-chart-link" href="#B2_volume_value_bubble.html">B2. Volume vs Value (Bubble)</a><a class="nav-chart-link" href="#B3_top_molecules_bar_Men_vi_sinh.html">B3. Top Molecules — Men vi sinh</a><a class="nav-chart-link" href="#B3_top_molecules_bar_Men_tieu_hoa.html">B3. Top Molecules — Men tieu hoa</a><a class="nav-chart-link" href="#B3_top_molecules_bar_Vitamin.html">B3. Top Molecules — Vitamin</a><a class="nav-chart-link" href="#B4_molecule_growth_heatmap.html">B4. Heatmap tang truong phan tu</a><a class="nav-chart-link" href="#B5_top_brands_bar_Men_vi_sinh.html">B5. Top Brands — Men vi sinh</a><a class="nav-chart-link" href="#B5_top_brands_bar_Men_tieu_hoa.html">B5. Top Brands — Men tieu hoa</a><a class="nav-chart-link" href="#B5_top_brands_bar_Vitamin.html">B5. Top Brands — Vitamin</a></div>
+    </div>
+    <div class="nav-section" data-module="module-c">
+      <a class="nav-module" href="#module-c" style="--accent: var(--accent-c)">
+        <span class="dot" style="background:var(--accent-c)"></span>
+        <span>C — Canh tranh</span>
+        <span class="badge">8</span>
+      </a>
+      <div class="nav-charts"><a class="nav-chart-link" href="#C1_corp_share_stacked_Men_vi_sinh.html">C1. Thi phan tap doan — Men vi sinh</a><a class="nav-chart-link" href="#C1_corp_share_stacked_Men_tieu_hoa.html">C1. Thi phan tap doan — Men tieu hoa</a><a class="nav-chart-link" href="#C1_corp_share_stacked_Vitamin.html">C1. Thi phan tap doan — Vitamin</a><a class="nav-chart-link" href="#C2_domestic_vs_import.html">C2. Noi dia vs Ngoai nhap</a><a class="nav-chart-link" href="#C3_bcg_matrix_Men_vi_sinh.html">C3. BCG Matrix — Men vi sinh</a><a class="nav-chart-link" href="#C3_bcg_matrix_Men_tieu_hoa.html">C3. BCG Matrix — Men tieu hoa</a><a class="nav-chart-link" href="#C3_bcg_matrix_Vitamin.html">C3. BCG Matrix — Vitamin</a><a class="nav-chart-link" href="#C4_brand_growth_ranking.html">C4. Tang truong va suy giam brand</a></div>
+    </div>
+    <div class="nav-section" data-module="module-d">
+      <a class="nav-module" href="#module-d" style="--accent: var(--accent-d)">
+        <span class="dot" style="background:var(--accent-d)"></span>
+        <span>D — Xu huong</span>
+        <span class="badge">3</span>
+      </a>
+      <div class="nav-charts"><a class="nav-chart-link" href="#D1_forecast_by_group.html">D1. Forecast doanh so 3 nhom</a><a class="nav-chart-link" href="#D2_waterfall_delta.html">D2. Waterfall dong gop tang truong</a><a class="nav-chart-link" href="#D3_cagr_summary_bar.html">D3. CAGR tong hop 3 nhom</a></div>
+    </div></nav>
+  <div class="main-content" id="mainContent">
+    <section class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-icon" style="background:#EFF6FF;color:var(--accent-a)"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+        <div><div class="label">Total Charts</div><div class="value">24</div></div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon" style="background:#F0FDF4;color:var(--accent-b)"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+        <div><div class="label">Modules</div><div class="value">4</div></div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon" style="background:#FEF3C7;color:var(--accent-c)"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <div><div class="label">Focus Groups</div><div class="value">3</div></div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon" style="background:#F5F3FF;color:var(--accent-d)"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div><div class="label">Analysis Depth</div><div class="value">Full</div></div>
+      </div></section>
+    
+    
+    <section class="module-section" id="module-a">
+      <div class="module-header" onclick="toggleModule(this)" style="--accent: var(--accent-a)">
+        <div class="module-header-left">
+          <div class="module-icon" style="background:var(--accent-a)">A</div>
+          <div><h2>MODULE A — Tong quan thi truong</h2><p>Quy mo thi truong, tang truong, thi phan nhom va xu huong gia.</p></div>
+        </div>
+        <div class="module-header-right">
+          <span class="chart-count">4 charts</span>
+          <div class="collapse-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+      </div>
+      <div class="chart-grid">
+        
+        <article class="chart-card" id="A1_market_total_stacked_bar.html" data-title="A1. Doanh so thi truong theo nam (Stacked Bar)">
+          <div class="chart-card-header">
+            <h3>A1. Doanh so thi truong theo nam (Stacked Bar)</h3>
+            <div class="chart-meta">
+              <span class="file-tag">A1_market_total_stacked_bar.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="A1. Doanh so thi truong theo nam (Stacked Bar)" src="../charts/A1_market_total_stacked_bar.html" loading="lazy" style="height:680px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="A2_market_yoy_combo.html" data-title="A2. Tong doanh so va tang truong YoY">
+          <div class="chart-card-header">
+            <h3>A2. Tong doanh so va tang truong YoY</h3>
+            <div class="chart-meta">
+              <span class="file-tag">A2_market_yoy_combo.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="A2. Tong doanh so va tang truong YoY" src="../charts/A2_market_yoy_combo.html" loading="lazy" style="height:680px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="A3_group_share_donut.html" data-title="A3. Thi phan theo nhom san pham (Donut)">
+          <div class="chart-card-header">
+            <h3>A3. Thi phan theo nhom san pham (Donut)</h3>
+            <div class="chart-meta">
+              <span class="file-tag">A3_group_share_donut.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="A3. Thi phan theo nhom san pham (Donut)" src="../charts/A3_group_share_donut.html" loading="lazy" style="height:580px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="A4_price_trend_line.html" data-title="A4. Xu huong gia trung binh / don vi">
+          <div class="chart-card-header">
+            <h3>A4. Xu huong gia trung binh / don vi</h3>
+            <div class="chart-meta">
+              <span class="file-tag">A4_price_trend_line.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="A4. Xu huong gia trung binh / don vi" src="../charts/A4_price_trend_line.html" loading="lazy" style="height:680px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+      </div>
+    </section>
+    <section class="module-section" id="module-b">
+      <div class="module-header" onclick="toggleModule(this)" style="--accent: var(--accent-b)">
+        <div class="module-header-left">
+          <div class="module-icon" style="background:var(--accent-b)">B</div>
+          <div><h2>MODULE B — Phan tich nhom san pham</h2><p>Phan tich sau Men vi sinh, Men tieu hoa va Vitamin.</p></div>
+        </div>
+        <div class="module-header-right">
+          <span class="chart-count">9 charts</span>
+          <div class="collapse-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+      </div>
+      <div class="chart-grid">
+        
+        <article class="chart-card" id="B1_group_revenue_multiline.html" data-title="B1. Doanh so 3 nhom theo nam (Multi-line)">
+          <div class="chart-card-header">
+            <h3>B1. Doanh so 3 nhom theo nam (Multi-line)</h3>
+            <div class="chart-meta">
+              <span class="file-tag">B1_group_revenue_multiline.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="B1. Doanh so 3 nhom theo nam (Multi-line)" src="../charts/B1_group_revenue_multiline.html" loading="lazy" style="height:680px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="B2_volume_value_bubble.html" data-title="B2. Volume vs Value (Bubble)">
+          <div class="chart-card-header">
+            <h3>B2. Volume vs Value (Bubble)</h3>
+            <div class="chart-meta">
+              <span class="file-tag">B2_volume_value_bubble.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="B2. Volume vs Value (Bubble)" src="../charts/B2_volume_value_bubble.html" loading="lazy" style="height:680px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="B3_top_molecules_bar_Men_vi_sinh.html" data-title="B3. Top Molecules — Men vi sinh">
+          <div class="chart-card-header">
+            <h3>B3. Top Molecules — Men vi sinh</h3>
+            <div class="chart-meta">
+              <span class="file-tag">B3_top_molecules_bar_Men_vi_sinh.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="B3. Top Molecules — Men vi sinh" src="../charts/B3_top_molecules_bar_Men_vi_sinh.html" loading="lazy" style="height:560px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="B3_top_molecules_bar_Men_tieu_hoa.html" data-title="B3. Top Molecules — Men tieu hoa">
+          <div class="chart-card-header">
+            <h3>B3. Top Molecules — Men tieu hoa</h3>
+            <div class="chart-meta">
+              <span class="file-tag">B3_top_molecules_bar_Men_tieu_hoa.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="B3. Top Molecules — Men tieu hoa" src="../charts/B3_top_molecules_bar_Men_tieu_hoa.html" loading="lazy" style="height:560px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="B3_top_molecules_bar_Vitamin.html" data-title="B3. Top Molecules — Vitamin">
+          <div class="chart-card-header">
+            <h3>B3. Top Molecules — Vitamin</h3>
+            <div class="chart-meta">
+              <span class="file-tag">B3_top_molecules_bar_Vitamin.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="B3. Top Molecules — Vitamin" src="../charts/B3_top_molecules_bar_Vitamin.html" loading="lazy" style="height:560px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="B4_molecule_growth_heatmap.html" data-title="B4. Heatmap tang truong phan tu">
+          <div class="chart-card-header">
+            <h3>B4. Heatmap tang truong phan tu</h3>
+            <div class="chart-meta">
+              <span class="file-tag">B4_molecule_growth_heatmap.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="B4. Heatmap tang truong phan tu" src="../charts/B4_molecule_growth_heatmap.html" loading="lazy" style="height:720px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="B5_top_brands_bar_Men_vi_sinh.html" data-title="B5. Top Brands — Men vi sinh">
+          <div class="chart-card-header">
+            <h3>B5. Top Brands — Men vi sinh</h3>
+            <div class="chart-meta">
+              <span class="file-tag">B5_top_brands_bar_Men_vi_sinh.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="B5. Top Brands — Men vi sinh" src="../charts/B5_top_brands_bar_Men_vi_sinh.html" loading="lazy" style="height:520px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="B5_top_brands_bar_Men_tieu_hoa.html" data-title="B5. Top Brands — Men tieu hoa">
+          <div class="chart-card-header">
+            <h3>B5. Top Brands — Men tieu hoa</h3>
+            <div class="chart-meta">
+              <span class="file-tag">B5_top_brands_bar_Men_tieu_hoa.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="B5. Top Brands — Men tieu hoa" src="../charts/B5_top_brands_bar_Men_tieu_hoa.html" loading="lazy" style="height:520px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="B5_top_brands_bar_Vitamin.html" data-title="B5. Top Brands — Vitamin">
+          <div class="chart-card-header">
+            <h3>B5. Top Brands — Vitamin</h3>
+            <div class="chart-meta">
+              <span class="file-tag">B5_top_brands_bar_Vitamin.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="B5. Top Brands — Vitamin" src="../charts/B5_top_brands_bar_Vitamin.html" loading="lazy" style="height:520px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+      </div>
+    </section>
+    <section class="module-section" id="module-c">
+      <div class="module-header" onclick="toggleModule(this)" style="--accent: var(--accent-c)">
+        <div class="module-header-left">
+          <div class="module-icon" style="background:var(--accent-c)">C</div>
+          <div><h2>MODULE C — Phan tich canh tranh</h2><p>Thi phan tap doan, noi dia vs ngoai nhap, BCG matrix va brand growth.</p></div>
+        </div>
+        <div class="module-header-right">
+          <span class="chart-count">8 charts</span>
+          <div class="collapse-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+      </div>
+      <div class="chart-grid">
+        
+        <article class="chart-card" id="C1_corp_share_stacked_Men_vi_sinh.html" data-title="C1. Thi phan tap doan — Men vi sinh">
+          <div class="chart-card-header">
+            <h3>C1. Thi phan tap doan — Men vi sinh</h3>
+            <div class="chart-meta">
+              <span class="file-tag">C1_corp_share_stacked_Men_vi_sinh.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="C1. Thi phan tap doan — Men vi sinh" src="../charts/C1_corp_share_stacked_Men_vi_sinh.html" loading="lazy" style="height:680px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="C1_corp_share_stacked_Men_tieu_hoa.html" data-title="C1. Thi phan tap doan — Men tieu hoa">
+          <div class="chart-card-header">
+            <h3>C1. Thi phan tap doan — Men tieu hoa</h3>
+            <div class="chart-meta">
+              <span class="file-tag">C1_corp_share_stacked_Men_tieu_hoa.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="C1. Thi phan tap doan — Men tieu hoa" src="../charts/C1_corp_share_stacked_Men_tieu_hoa.html" loading="lazy" style="height:680px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="C1_corp_share_stacked_Vitamin.html" data-title="C1. Thi phan tap doan — Vitamin">
+          <div class="chart-card-header">
+            <h3>C1. Thi phan tap doan — Vitamin</h3>
+            <div class="chart-meta">
+              <span class="file-tag">C1_corp_share_stacked_Vitamin.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="C1. Thi phan tap doan — Vitamin" src="../charts/C1_corp_share_stacked_Vitamin.html" loading="lazy" style="height:680px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="C2_domestic_vs_import.html" data-title="C2. Noi dia vs Ngoai nhap">
+          <div class="chart-card-header">
+            <h3>C2. Noi dia vs Ngoai nhap</h3>
+            <div class="chart-meta">
+              <span class="file-tag">C2_domestic_vs_import.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="C2. Noi dia vs Ngoai nhap" src="../charts/C2_domestic_vs_import.html" loading="lazy" style="height:680px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="C3_bcg_matrix_Men_vi_sinh.html" data-title="C3. BCG Matrix — Men vi sinh">
+          <div class="chart-card-header">
+            <h3>C3. BCG Matrix — Men vi sinh</h3>
+            <div class="chart-meta">
+              <span class="file-tag">C3_bcg_matrix_Men_vi_sinh.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="C3. BCG Matrix — Men vi sinh" src="../charts/C3_bcg_matrix_Men_vi_sinh.html" loading="lazy" style="height:640px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="C3_bcg_matrix_Men_tieu_hoa.html" data-title="C3. BCG Matrix — Men tieu hoa">
+          <div class="chart-card-header">
+            <h3>C3. BCG Matrix — Men tieu hoa</h3>
+            <div class="chart-meta">
+              <span class="file-tag">C3_bcg_matrix_Men_tieu_hoa.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="C3. BCG Matrix — Men tieu hoa" src="../charts/C3_bcg_matrix_Men_tieu_hoa.html" loading="lazy" style="height:640px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="C3_bcg_matrix_Vitamin.html" data-title="C3. BCG Matrix — Vitamin">
+          <div class="chart-card-header">
+            <h3>C3. BCG Matrix — Vitamin</h3>
+            <div class="chart-meta">
+              <span class="file-tag">C3_bcg_matrix_Vitamin.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="C3. BCG Matrix — Vitamin" src="../charts/C3_bcg_matrix_Vitamin.html" loading="lazy" style="height:640px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="C4_brand_growth_ranking.html" data-title="C4. Tang truong va suy giam brand">
+          <div class="chart-card-header">
+            <h3>C4. Tang truong va suy giam brand</h3>
+            <div class="chart-meta">
+              <span class="file-tag">C4_brand_growth_ranking.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="C4. Tang truong va suy giam brand" src="../charts/C4_brand_growth_ranking.html" loading="lazy" style="height:660px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+      </div>
+    </section>
+    <section class="module-section" id="module-d">
+      <div class="module-header" onclick="toggleModule(this)" style="--accent: var(--accent-d)">
+        <div class="module-header-left">
+          <div class="module-icon" style="background:var(--accent-d)">D</div>
+          <div><h2>MODULE D — Xu huong va du bao</h2><p>Forecast, waterfall dong gop tang truong va CAGR.</p></div>
+        </div>
+        <div class="module-header-right">
+          <span class="chart-count">3 charts</span>
+          <div class="collapse-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+      </div>
+      <div class="chart-grid">
+        
+        <article class="chart-card" id="D1_forecast_by_group.html" data-title="D1. Forecast doanh so 3 nhom">
+          <div class="chart-card-header">
+            <h3>D1. Forecast doanh so 3 nhom</h3>
+            <div class="chart-meta">
+              <span class="file-tag">D1_forecast_by_group.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="D1. Forecast doanh so 3 nhom" src="../charts/D1_forecast_by_group.html" loading="lazy" style="height:680px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="D2_waterfall_delta.html" data-title="D2. Waterfall dong gop tang truong">
+          <div class="chart-card-header">
+            <h3>D2. Waterfall dong gop tang truong</h3>
+            <div class="chart-meta">
+              <span class="file-tag">D2_waterfall_delta.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="D2. Waterfall dong gop tang truong" src="../charts/D2_waterfall_delta.html" loading="lazy" style="height:680px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+        <article class="chart-card" id="D3_cagr_summary_bar.html" data-title="D3. CAGR tong hop 3 nhom">
+          <div class="chart-card-header">
+            <h3>D3. CAGR tong hop 3 nhom</h3>
+            <div class="chart-meta">
+              <span class="file-tag">D3_cagr_summary_bar.html</span>
+              <button class="expand-btn" onclick="openFullscreen(this)" title="Fullscreen"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+            </div>
+          </div>
+          <div class="chart-iframe-wrapper">
+            <div class="iframe-skeleton">Loading chart...</div>
+            <iframe title="D3. CAGR tong hop 3 nhom" src="../charts/D3_cagr_summary_bar.html" loading="lazy" style="height:580px" onload="this.previousElementSibling.classList.add('hidden')"></iframe>
+          </div>
+        </article>
+      </div>
+    </section>
+    <div class="no-results" id="noResults"><p>No charts match your search.</p></div>
+    <footer style="text-align:center;padding:24px 0 40px;color:var(--muted);font-size:12px;">
+      Pharma Analytics &middot; Vietnam Market Report
+    </footer>
+  </div>
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-content">
+      <div class="modal-header"><h3 id="modalTitle">Chart</h3><button class="modal-close" onclick="closeFullscreen()" title="Close">&times;</button></div>
+      <div class="modal-body"><iframe id="modalIframe" src="about:blank"></iframe></div>
+    </div>
+  </div>
+  <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></button>
+  <script>(function(){
+  var html = document.documentElement;
+  var themeBtn = document.getElementById('themeToggle');
+  var stored = localStorage.getItem('pharma_theme');
+  if (stored) html.setAttribute('data-theme', stored);
+  themeBtn.addEventListener('click', function(){
+    var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('pharma_theme', next);
+  });
+
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('sidebarOverlay');
+  var menuBtn = document.getElementById('menuToggle');
+  menuBtn.addEventListener('click', function(){ sidebar.classList.toggle('open'); overlay.classList.toggle('show'); });
+  overlay.addEventListener('click', function(){ sidebar.classList.remove('open'); overlay.classList.remove('show'); });
+
+  document.querySelectorAll('.nav-module').forEach(function(link){
+    link.addEventListener('click', function(){
+      var charts = link.closest('.nav-section').querySelector('.nav-charts');
+      charts.classList.toggle('expanded');
+      if(window.innerWidth < 1024){
+        setTimeout(function(){ sidebar.classList.remove('open'); overlay.classList.remove('show'); }, 200);
+      }
+    });
+  });
+
+  var moduleSections = document.querySelectorAll('.module-section');
+  var navModules = document.querySelectorAll('.nav-module');
+  var backToTop = document.getElementById('backToTop');
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var id = entry.target.id;
+        navModules.forEach(function(n){
+          if(n.getAttribute('href') === '#'+id){
+            n.classList.add('active');
+            n.closest('.nav-section').querySelector('.nav-charts').classList.add('expanded');
+          } else { n.classList.remove('active'); }
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -60% 0px' });
+  moduleSections.forEach(function(s){ observer.observe(s); });
+  window.addEventListener('scroll', function(){ backToTop.classList.toggle('show', window.scrollY > 400); });
+
+  window.toggleModule = function(header){ header.closest('.module-section').classList.toggle('collapsed'); };
+
+  var searchInput = document.getElementById('searchInput');
+  var searchBox = document.getElementById('searchBox');
+  var noResults = document.getElementById('noResults');
+  searchInput.addEventListener('focus', function(){ searchBox.classList.add('open'); });
+  searchInput.addEventListener('blur', function(){ if(!searchInput.value) searchBox.classList.remove('open'); });
+  searchInput.addEventListener('input', function(){
+    var q = searchInput.value.toLowerCase().trim();
+    var anyVisible = false;
+    document.querySelectorAll('.chart-card').forEach(function(card){
+      var title = (card.getAttribute('data-title')||'').toLowerCase();
+      var file = card.id.toLowerCase();
+      var match = !q || title.indexOf(q)>=0 || file.indexOf(q)>=0;
+      card.style.display = match ? '' : 'none';
+      if(match) anyVisible = true;
+    });
+    moduleSections.forEach(function(sec){
+      var vis = sec.querySelectorAll('.chart-card:not([style*="display: none"])');
+      sec.style.display = vis.length ? '' : 'none';
+    });
+    noResults.classList.toggle('show', !anyVisible && q.length > 0);
+  });
+
+  document.addEventListener('keydown', function(e){
+    if((e.ctrlKey && e.key==='k')||(e.key==='/'&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName))){ e.preventDefault(); searchInput.focus(); searchBox.classList.add('open'); }
+    if(e.key==='Escape'){ searchInput.blur(); closeFullscreen(); }
+  });
+
+  var modalOverlay = document.getElementById('modalOverlay');
+  var modalTitle = document.getElementById('modalTitle');
+  var modalIframe = document.getElementById('modalIframe');
+  window.openFullscreen = function(btn){
+    var card = btn.closest('.chart-card');
+    var iframe = card.querySelector('iframe');
+    var title = card.querySelector('h3').textContent;
+    modalTitle.textContent = title;
+    modalIframe.src = iframe ? iframe.src : '';
+    modalOverlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+  window.closeFullscreen = function(){
+    modalOverlay.classList.remove('show');
+    modalIframe.src = 'about:blank';
+    document.body.style.overflow = '';
+  };
+  modalOverlay.addEventListener('click', function(e){ if(e.target===modalOverlay) closeFullscreen(); });
+})();
+</script>
+</body>
+</html>
